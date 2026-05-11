@@ -57,7 +57,9 @@ def create_file(order_parts, current_profile, current_file):
     if file_path.exists():
         try:
             profile.load_profile(file_path)
-        except DsuFileError, DsuProfileError:
+            print("profile loaded")
+            return profile, file_path
+        except (DsuFileError, DsuProfileError):
             print("ERROR")
             return current_profile, current_file
     user_name=input("username:")
@@ -85,4 +87,20 @@ def create_file(order_parts, current_profile, current_file):
 
 
 def open_file(order_parts, current_profile, current_file):
-    pass
+    if len(order_parts)!=2:
+        print("ERROR")
+        return current_profile, current_file
+    file_path=Path(order_parts[1])
+    if not file_path.exists() or not file_path.is_file() or file_path.suffix != ".dsu":
+        print("ERROR")
+        return current_profile, current_file
+    profile=Profile()
+
+    try:
+        profile.load_profile(file_path)
+        print("profile loaded")
+        return profile, file_path
+    except (DsuFileError, DsuProfileError):
+        print("ERROR")
+        return current_profile, current_file
+
