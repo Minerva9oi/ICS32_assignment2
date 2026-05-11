@@ -142,9 +142,32 @@ def edit_profile(order_parts, current_profile, current_file):
                 print("ERROR")
                 return
             current_profile.bio=value
+        
+        elif option=='-addpost':
+            if value.strip()=='':
+                print("ERROR")
+                return
+            post=Post(value)
+            current_profile.add_post(post)
+        
+        elif option=='-delpost':
+            try:
+                delete_index=int(value)
+            except ValueError:
+                print("ERROR")
+                return
+            delete_resultbool=current_profile.del_post(delete_index)
+            if delete_resultbool == False:
+                print("ERROR")
+                return
+
+
+
         else:
             print("ERROR")
             return
+        
+
         try:
             current_profile.save_profile(str(current_file))
         except DsuFileError:
