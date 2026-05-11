@@ -35,6 +35,11 @@ def run():
             current_profile, current_file=open_file(order_parts, current_profile, current_file)
         elif order_parts[0]=="E":
             edit_profile(order_parts, current_profile, current_file)
+        elif order_parts[0]=="P":
+            print_profile(order_parts, current_profile, current_file)
+        elif order_parts[0] == "R":
+            read_file(order_parts)
+
         else:
             print("ERROR")
             continue
@@ -161,8 +166,6 @@ def edit_profile(order_parts, current_profile, current_file):
                 print("ERROR")
                 return
 
-
-
         else:
             print("ERROR")
             return
@@ -173,4 +176,96 @@ def edit_profile(order_parts, current_profile, current_file):
         except DsuFileError:
             print("ERROR")
             return
+        
+def print_profile(order_parts, current_profile, current_file):
+    if current_profile is None or current_file is None:
+        print("ERROR")
+        return
 
+    if len(order_parts) < 2:
+        print("ERROR")
+        return
+
+    if order_parts[1] == "-usr":
+        if len(order_parts) != 2:
+            print("ERROR")
+            return
+        print(current_profile.username)
+
+    elif order_parts[1] == "-pwd":
+        if len(order_parts) != 2:
+            print("ERROR")
+            return
+        print(current_profile.password)
+
+    elif order_parts[1] == "-bio":
+        if len(order_parts) != 2:
+            print("ERROR")
+            return
+        print(current_profile.bio)
+
+    elif order_parts[1] == "-posts":
+        if len(order_parts) != 2:
+            print("ERROR")
+            return
+
+        posts = current_profile.get_posts()
+
+        for index in range(len(posts)):
+            print(str(index) + ": " + posts[index].get_entry())
+
+    elif order_parts[1] == "-post":
+        if len(order_parts) != 3:
+            print("ERROR")
+            return
+
+        try:
+            post_id = int(order_parts[2])
+        except ValueError:
+            print("ERROR")
+            return
+
+        posts = current_profile.get_posts()
+
+        if post_id < 0 or post_id >= len(posts):
+            print("ERROR")
+            return
+
+        print(posts[post_id].get_entry())
+
+    elif order_parts[1] == "-all":
+        if len(order_parts) != 2:
+            print("ERROR")
+            return
+
+        print("Username: " + str(current_profile.username))
+        print("Password: " + str(current_profile.password))
+        print("Bio: " + str(current_profile.bio))
+
+        posts = current_profile.get_posts()
+
+        for index in range(len(posts)):
+            print(str(index) + ": " + posts[index].get_entry())
+
+    else:
+        print("ERROR")
+        return
+
+def read_file(text):
+    if len(text)!=2:
+        print("ERROR")
+        return
+    
+    file_path=Path(text[1])
+
+    if not file_path.exists() or not file_path.is_file() or file_path.suffix != ".dsu":
+        print("ERROR")
+        return
+    else:
+        content=file_path.read_text()
+        
+        if len(content)==0:
+            print("EMPTY")
+            return
+        else:
+            print(content, end='')
