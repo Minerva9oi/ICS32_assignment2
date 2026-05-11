@@ -33,6 +33,8 @@ def run():
             current_profile, current_file=create_file(order_parts, current_profile, current_file)
         elif order_parts[0]=="O":
             current_profile, current_file=open_file(order_parts, current_profile, current_file)
+        elif order_parts[0]=="E":
+            edit_profile(order_parts, current_profile, current_file)
         else:
             print("ERROR")
             continue
@@ -103,4 +105,49 @@ def open_file(order_parts, current_profile, current_file):
     except (DsuFileError, DsuProfileError):
         print("ERROR")
         return current_profile, current_file
+    
+def edit_profile(order_parts, current_profile, current_file):
+    if current_profile is None or current_file is None:
+        print("ERROR")
+        return
+    if len(order_parts)<3:
+        print("ERROR")
+        return
+    index=1
+    while index<len(order_parts):
+        option=order_parts[index]
+
+        if index+1 >= len(order_parts):
+            print("ERROR")
+            return
+        
+        value=order_parts[index+1]
+        index +=2
+        
+
+        if option=="-usr":
+            if value.strip()==''or' ' in value:
+                print("ERROR")
+                return
+            current_profile.username=value
+
+        elif option=="-pwd":
+            if value.strip()==''or ' 'in value:
+                print("ERROR")
+                return
+            current_profile.password=value
+
+        elif option=='-bio':
+            if value.strip()=='':
+                print("ERROR")
+                return
+            current_profile.bio=value
+        else:
+            print("ERROR")
+            return
+        try:
+            current_profile.save_profile(str(current_file))
+        except DsuFileError:
+            print("ERROR")
+            return
 
